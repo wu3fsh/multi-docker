@@ -6,7 +6,7 @@ before_install:
   - docker build -t complexapp -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run CI=true complexapp npm test
+  - docker run -e CI=true complexapp npm test
 
 after_success:
   - docker build -t we3fsh/multi-client ./client
