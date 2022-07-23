@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t complexapp -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run CI=true complexapp npm test
+
+after_success:
+  - docker build -t we3fsh/multi-client ./client
+  - docker build -t we3fsh/multi-nginx ./nginx
+  - docker build -t we3fsh/multi-server ./server
+  - docker build -t we3fsh/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take the images and pushe them to docker hub
+  - docker push we3fsh/multi-client
+  - docker push we3fsh/multi-nginx
+  - docker push we3fsh/multi-server
+  - docker push we3fsh/multi-worker
